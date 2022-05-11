@@ -22,8 +22,8 @@ const {
  * 
  * @param {Uint8Array|Uint8ClampedArray} colorData Array containing color of each pixel in the image
  * @param {object} header QOI header
- * @param {int} header.width Image width in pixels (32-bit)
- * @param {int} header.height Image height in pixels (32-bit)
+ * @param {int} header.width Image width in pixels (32-bit Big Endian)
+ * @param {int} header.height Image height in pixels (32-bit Big Endian)
  * @param {int} header.channels Number of channels the image has (3 = RGB, 4 = RGBA)
  * @param {int} header.colorSpace Colorspace used in image (0: sRGB with linear alpha, 1: linear)
  * 
