@@ -61,32 +61,32 @@ const encode = (colorData, header) => {
   let p = 0;
 
   const maxSize = width * height * (channels + 1) + QOI_HEADER_SIZE + QOI_END_MARKER_SIZE;
-  const qoi = new Uint8Array(maxSize);
+  const bytes = new Uint8Array(maxSize);
   const index = new Uint8Array(64 * 4);
 
   // 0 -> 3 : magic "qoif"
-  qoi[p++] = QOI_MAGIC_Q;
-  qoi[p++] = QOI_MAGIC_O;
-  qoi[p++] = QOI_MAGIC_I;
-  qoi[p++] = QOI_MAGIC_F;
+  bytes[p++] = QOI_MAGIC_Q;
+  bytes[p++] = QOI_MAGIC_O;
+  bytes[p++] = QOI_MAGIC_I;
+  bytes[p++] = QOI_MAGIC_F;
 
   // 4 -> 7 : width
-  qoi[p++] = (width >> 24) & QOI_OP_RGBA;
-  qoi[p++] = (width >> 16) & QOI_OP_RGBA;
-  qoi[p++] = (width >> 8) & QOI_OP_RGBA;
-  qoi[p++] = width & QOI_OP_RGBA;
+  bytes[p++] = (width >> 24) & QOI_OP_RGBA;
+  bytes[p++] = (width >> 16) & QOI_OP_RGBA;
+  bytes[p++] = (width >> 8) & QOI_OP_RGBA;
+  bytes[p++] = width & QOI_OP_RGBA;
 
   // 8 -> 11 : height
-  qoi[p++] = (height >> 24) & QOI_OP_RGBA;
-  qoi[p++] = (height >> 16) & QOI_OP_RGBA;
-  qoi[p++] = (height >> 8) & QOI_OP_RGBA;
-  qoi[p++] = height & QOI_OP_RGBA;
+  bytes[p++] = (height >> 24) & QOI_OP_RGBA;
+  bytes[p++] = (height >> 16) & QOI_OP_RGBA;
+  bytes[p++] = (height >> 8) & QOI_OP_RGBA;
+  bytes[p++] = height & QOI_OP_RGBA;
 
   // 12 : channels
-  qoi[p++] = channels;
+  bytes[p++] = channels;
 
   // 13 : colorspace
-  qoi[p++] = colorSpace;
+  bytes[p++] = colorSpace;
 
   for(let pixelPos = 0; pixelPos < pixelLength; pixelPos += channels) {
     red = colorData[pixelPos];
@@ -101,19 +101,19 @@ const encode = (colorData, header) => {
 
       // Reached maximum run length, or reached end of colorData
       if(run === 62 || pixelPos === pixelEnd) {
-        qoi[p++] = QOI_OP_RUN | (run - 1);
+        bytes[p++] = QOI_OP_RUN | (run - 1);
         run = 0;
       }
     } else {
       if(run > 0) {
-        qoi[p++] = QOI_OP_RUN | (run - 1);
+        bytes[p++] = QOI_OP_RUN | (run - 1);
         run = 0;
       }
 
       const indexPos = ((red * 3 + green * 5 + blue * 7 + alpha * 11) % 64) * 4;
 
       if(index[indexPos] === red && index[indexPos + 1] === green && index[indexPos + 2] === blue && index[indexPos + 3] === alpha) {
-        qoi[p++] = QOI_OP_INDEX | indexPos;
+        bytes[p++] = QOI_OP_INDEX | indexPos;
       } else {
         index[indexPos] = red;
         index[indexPos + 1] = green;
@@ -133,22 +133,22 @@ const encode = (colorData, header) => {
           const db_dg = db - dg;
 
           if(dr > -3 && dr < 2 && dg > -3 && dg < 2 && db > -3 && db < 2) {
-            qoi[p++] = QOI_OP_DIFF | (dr + 2) << 4 | (dg + 2) << 2 | (db + 2);
+            bytes[p++] = QOI_OP_DIFF | (dr + 2) << 4 | (dg + 2) << 2 | (db + 2);
           } else if(dr_dg > -9 && dr_dg < 8 && dg > -33 && dg < 32 && db_dg > -9 && db_dg < 8) {
-            qoi[p++] = QOI_OP_LUMA | (dg + 32);
-            qoi[p++] = (dr_dg + 8) << 4 | (db_dg + 8);
+            bytes[p++] = QOI_OP_LUMA | (dg + 32);
+            bytes[p++] = (dr_dg + 8) << 4 | (db_dg + 8);
           } else {
-            qoi[p++] = QOI_OP_RGB;
-            qoi[p++] = red;
-            qoi[p++] = green;
-            qoi[p++] = blue;
+            bytes[p++] = QOI_OP_RGB;
+            bytes[p++] = red;
+            bytes[p++] = green;
+            bytes[p++] = blue;
           }
         } else {
-          qoi[p++] = QOI_OP_RGBA;
-          qoi[p++] = red;
-          qoi[p++] = green;
-          qoi[p++] = blue;
-          qoi[p++] = alpha;
+          bytes[p++] = QOI_OP_RGBA;
+          bytes[p++] = red;
+          bytes[p++] = green;
+          bytes[p++] = blue;
+          bytes[p++] = alpha;
         }
       }
     }
@@ -160,12 +160,12 @@ const encode = (colorData, header) => {
 
   // End marker
   for(let i = 0; i < 7; i++)
-    qoi[p++] = 0;
-  qoi[p++] = 1;
+    bytes[p++] = 0;
+  bytes[p++] = 1;
 
-  console.log(qoi);
+  console.log(bytes);
 
-  return qoi.buffer.slice(0, p);
+  return bytes.buffer.slice(0, p);
 };
 
 module.exports = { encode };
