@@ -1,3 +1,6 @@
+const QOI_HEADER_SIZE = 14;
+const QOI_END_MARKER_SIZE = 8;
+
 /*
 .- QOI_OP_INDEX ---------.
 |         Byte[0]        |
@@ -132,6 +135,8 @@ const QOI_MAGIC_I = 0x69;
 const QOI_MAGIC_F = 0x66;
 
 module.exports = {
+  QOI_HEADER_SIZE,
+  QOI_END_MARKER_SIZE,
   QOI_MAGIC_Q,
   QOI_MAGIC_O,
   QOI_MAGIC_I,

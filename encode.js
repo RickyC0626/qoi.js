@@ -1,4 +1,6 @@
 const {
+  QOI_HEADER_SIZE,
+  QOI_END_MARKER_SIZE,
   QOI_MAGIC_Q,
   QOI_MAGIC_O,
   QOI_MAGIC_I,
@@ -58,7 +60,7 @@ const encode = (colorData, header) => {
   let run = 0;
   let p = 0;
 
-  const maxSize = width * height * (channels + 1) + 14 + 8;
+  const maxSize = width * height * (channels + 1) + QOI_HEADER_SIZE + QOI_END_MARKER_SIZE;
   const qoi = new Uint8Array(maxSize);
   const index = new Uint8Array(64 * 4);
 
