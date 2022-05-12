@@ -1,0 +1,12 @@
+{
+  "name": "qoi.js",
+  "version": "0.1.0",
+  "description": "JavaScript implementation of QOI",
+  "main": "index.js",
+  "repository": "git@github.com:RickyC0626/qoi.js.git",
+  "author": "Ricky Chon <rickychon99@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "image-size": "^1.0.1"
+  }
+}
