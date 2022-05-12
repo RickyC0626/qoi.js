@@ -1,15 +1,12 @@
-const { encode } = require('./encode');
+const { encode } = require('./encoder');
 
-const image = new Uint8Array(3);
-image[0] = 255;
-image[1] = 255;
-image[2] = 255;
+const width = 5, height = 5, channels = 3;
+const image = new Uint8Array(width * height * channels).fill(200);
 
-const qoif = encode(image, {
-  width: 1,
-  height: 1,
-  channels: 3,
-  colorSpace: 1,
-});
-
-console.log(qoif);
+try {
+  const qoif = encode(image, { width, height, channels, colorspace: 1 });
+  console.log(qoif);
+}
+catch(err) {
+  console.log(`[\x1b[32m%s\x1b[0m] \x1b[31m%s\x1b[0m`, 'qoi.js', err.message);
+}
