@@ -67,11 +67,11 @@ const hash = ({ r, g, b, a }) => (
  *
  * @returns {ArrayBuffer} ArrayBuffer containing QOI file contents
  */
-const _encode = (imageBuffer, header) => {
+const encode = (imageBuffer, header) => {
   const imageWidth = header.width;
   const imageHeight = header.height;
-  const channels = header.channels;
-  const colorspace = header.colorspace;
+  const channels = header.channels || 4;
+  const colorspace = header.colorspace || 1;
 
   const totalPixels = imageWidth * imageHeight * channels;;
   const finalPixel = totalPixels - channels;
@@ -195,13 +195,7 @@ const _encode = (imageBuffer, header) => {
     bytes[p++] = el;
   });
 
-  console.log(bytes);
-
   return bytes.slice(0, p);
-};
-
-const encode = (file) => {
-
 };
 
 module.exports = { encode };
