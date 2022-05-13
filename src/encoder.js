@@ -69,7 +69,7 @@ const hash = ({ r, g, b, a }) => (
 const encode = (imageBuffer, header) => {
   const imageWidth = header.width;
   const imageHeight = header.height;
-  const channels = header.channels || 4;
+  const channels = header.channels || QOI_CHANNEL_RGBA;
   const colorspace = header.colorspace || QOI_SRGB; // sRGB by default, more web friendly
 
   const totalPixels = imageWidth * imageHeight * channels;;
