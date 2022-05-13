@@ -17,6 +17,13 @@ const {
 } = require('./constants');
 const { hash } = require('./util/pixel');
 
+/**
+ * Decode a QOI file
+ *
+ * @param {Uint8Array|Uint8ClampedArray} imageBuffer Array containing colors of each pixel in image
+ *
+ * @returns {object} Object containing raw pixels and additional image data
+ */
 const decode = (imageBuffer) => {
   const bytes = new Uint8Array(imageBuffer);
   let p = 0;
