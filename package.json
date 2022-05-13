@@ -1,5 +1,5 @@
 {
-  "name": "qoi-js",
+  "name": "qoi.js",
   "version": "1.0.0",
   "description": "QOI codec written in JavaScript",
   "main": "index.js",
