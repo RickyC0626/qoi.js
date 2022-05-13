@@ -1,6 +1,6 @@
 {
   "name": "qoi.js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "JavaScript implementation of QOI",
   "main": "index.js",
   "repository": "git@github.com:RickyC0626/qoi.js.git",
