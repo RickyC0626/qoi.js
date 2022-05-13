@@ -7,6 +7,7 @@ const { encode } = require('./encoder');
 const { decode } = require('./decoder');
 const { toGreen, toRed } = require('./util/colors');
 const sharp = require('sharp');
+const { QOI_SRGB } = require('./constants');
 
 const args = process.argv.slice(2);
 const instructions = `qoi.js CLI for PNG <--> QOI conversion
@@ -48,12 +49,14 @@ async function tryEncode() {
     const file = fs.readFileSync(path.resolve(fileToEncode));
     const { data, info } = await sharp(file)
       .raw()
+      .toColorspace('srgb')
       .toBuffer({ resolveWithObject: true });
 
     const qoif = encode(new Uint8Array(data), {
       width: info.width,
       height: info.height,
       channels: info.channels,
+      colorspace: QOI_SRGB,
     });
 
     const fileName = fileToEncode.substring(fileToEncode.lastIndexOf('/') + 1, fileToEncode.lastIndexOf('.'));
@@ -93,7 +96,7 @@ async function tryDecode() {
         height: raw.height,
         channels: raw.channels,
       }
-    }).png();
+    }).toColorspace('srgb').png();
 
     const fileName = fileToDecode.substring(fileToDecode.lastIndexOf('/') + 1, fileToDecode.lastIndexOf('.'));
     await image.toFile(`${__dirname}/../out/${fileName}.png`)
