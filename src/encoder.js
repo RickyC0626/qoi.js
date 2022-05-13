@@ -31,6 +31,10 @@ const LUMA_CH_DIFF_UPPER_BOUND = 7; // Red and blue
 const LUMA_CH_DIFF_BIAS_GREEN = 32;
 const LUMA_CH_DIFF_BIAS = 8; // Red and blue
 
+const RUN_LENGTH_LOWER_BOUND = 1;
+const RUN_LENGTH_UPPER_BOUND = 62; // 63 and 64 occupied by QOI_OP_RGB and QOI_OP_RGBA
+const RUN_LENGTH_BIAS = -1;
+
 const pixelsMatch = (p1, p2) => {
   if(p1 === undefined || p2 === undefined) return false;
 
@@ -126,14 +130,14 @@ const encode = (imageBuffer, header) => {
     if(pixelsMatch(pixel, prevPixel)) {
       run++;
 
-      if(run === 62 || offset === finalPixel) {
-        bytes[p++] = QOI_OP_RUN | (run - 1);
+      if(run === RUN_LENGTH_UPPER_BOUND || offset === finalPixel) {
+        bytes[p++] = QOI_OP_RUN | (run + RUN_LENGTH_BIAS);
         run = 0;
       }
     }
     else {
-      if(run > 0) {
-        bytes[p++] = QOI_OP_RUN | (run - 1);
+      if(run >= RUN_LENGTH_LOWER_BOUND) {
+        bytes[p++] = QOI_OP_RUN | (run + RUN_LENGTH_BIAS);
         run = 0;
       }
 
