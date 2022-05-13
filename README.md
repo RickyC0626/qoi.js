@@ -1,5 +1,5 @@
 # qoi.js
-[QOI codec](https://github.com/phoboslab/qoi) implemented in JavaScript.
+[QOI codec](https://github.com/phoboslab/qoi) written in JavaScript.
 
 ## Installation
 
