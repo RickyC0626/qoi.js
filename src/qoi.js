@@ -47,9 +47,6 @@ async function tryEncode() {
   logMessage(`Encoding ${fileToEncode}...`);
 
   try {
-    if(!fileToEncode.endsWith('.png'))
-      throw new Error('Input file must be a PNG file');
-
     const file = fs.readFileSync(path.resolve(fileToEncode));
     console.log(file)
 
