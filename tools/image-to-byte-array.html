@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert image to binary</title>
+  </head>
+  <body>
+    <form id="download-bin">
+      <div>
+        <label for="choose-file" style="font-size: 24px">Select a file:</label>
+        <br/>
+        <input type="file" id="choose-file" name="fileInput" accept="image/*" style="font-size: 18px">
+        <br/><br/>
+
+        <img id="image-preview">
+
+        <br/><br/>
+        <button type="submit" style="font-size: 18px">Download binary image pixel data</button>
+      </div>
+    </form>
+
+    <script>
+      const imagePreview = document.getElementById('image-preview');
+      const fileInput = document.getElementById('choose-file');
+      const downloadBin = document.getElementById('download-bin');
+      let data, fileName = 'download';
+
+      fileInput.addEventListener('change', () => renderImage());
+      downloadBin.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if(!data) return alert("There's nothing to download");
+
+        const blob = new Blob([data], { type: 'octet/stream' });
+        const a = document.createElement('a');
+
+        a.href = URL.createObjectURL(blob);
+        a.download = `${fileName.substring(0, fileName.lastIndexOf('.'))}.bin`;
+        a.click();
+      });
+
+      function renderImage() {
+        const file = fileInput.files[0];
+        console.log(file)
+        fileName = file.name;
+
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          imagePreview.src = reader.result;
+        });
+
+        if(file) {
+          reader.readAsDataURL(file);
+          setTimeout(() => drawImagePixels(), 1000);
+        }
+      }
+
+      function drawImagePixels() {
+        const canvas = document.createElement('canvas');
+        canvas.height = imagePreview.height;
+        canvas.width = imagePreview.width;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imagePreview, 0, 0);
+
+        const imgData = ctx.getImageData(0, 0, imagePreview.width, imagePreview.height);
+        const toHexByte = h => h.toString(16).padStart(2, '0');
+
+        data = imgData.data;
+      }
+    </script>
+  </body>
+</html>
