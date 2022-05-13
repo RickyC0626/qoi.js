@@ -2,7 +2,7 @@ const {
   QOI_HEADER_SIZE,
   QOI_END_MARKER,
   QOI_END_MARKER_SIZE,
-  MAX_INT32,
+  QOI_MAX_PIXELS,
   QOI_SRGB,
   QOI_LINEAR,
   QOI_CHANNEL_RGB,
@@ -14,49 +14,24 @@ const {
   QOI_OP_RUN,
   QOI_OP_RGB,
   QOI_OP_RGBA,
+  DIFF_CH_DIFF_LOWER_BOUND_RED,
+  DIFF_CH_DIFF_UPPER_BOUND_RED,
+  DIFF_CH_DIFF_LOWER_BOUND_GREEN,
+  DIFF_CH_DIFF_UPPER_BOUND_GREEN,
+  DIFF_CH_DIFF_LOWER_BOUND_BLUE,
+  DIFF_CH_DIFF_UPPER_BOUND_BLUE,
+  DIFF_CH_DIFF_BIAS,
+  LUMA_CH_DIFF_LOWER_BOUND_GREEN,
+  LUMA_CH_DIFF_UPPER_BOUND_GREEN,
+  LUMA_CH_DIFF_LOWER_BOUND,
+  LUMA_CH_DIFF_UPPER_BOUND,
+  LUMA_CH_DIFF_BIAS_GREEN,
+  LUMA_CH_DIFF_BIAS,
+  RUN_LENGTH_LOWER_BOUND,
+  RUN_LENGTH_UPPER_BOUND,
+  RUN_LENGTH_BIAS,
 } = require('./constants');
-
-const DIFF_CH_DIFF_LOWER_BOUND_RED = -2;
-const DIFF_CH_DIFF_UPPER_BOUND_RED = 1;
-const DIFF_CH_DIFF_LOWER_BOUND_GREEN = -2;
-const DIFF_CH_DIFF_UPPER_BOUND_GREEN = 1;
-const DIFF_CH_DIFF_LOWER_BOUND_BLUE = -2;
-const DIFF_CH_DIFF_UPPER_BOUND_BLUE = 1;
-const DIFF_CH_DIFF_BIAS = 2;
-
-const LUMA_CH_DIFF_LOWER_BOUND_GREEN = -32;
-const LUMA_CH_DIFF_UPPER_BOUND_GREEN = 31;
-const LUMA_CH_DIFF_LOWER_BOUND = -8; // Red and blue
-const LUMA_CH_DIFF_UPPER_BOUND = 7; // Red and blue
-const LUMA_CH_DIFF_BIAS_GREEN = 32;
-const LUMA_CH_DIFF_BIAS = 8; // Red and blue
-
-const RUN_LENGTH_LOWER_BOUND = 1;
-const RUN_LENGTH_UPPER_BOUND = 62; // 63 and 64 occupied by QOI_OP_RGB and QOI_OP_RGBA
-const RUN_LENGTH_BIAS = -1;
-
-const pixelsMatch = (p1, p2) => {
-  if(p1 === undefined || p2 === undefined) return false;
-
-  return (
-    p1.r === p2.r &&
-    p1.g === p2.g &&
-    p1.b === p2.b &&
-    p1.a === p2.a
-  );
-};
-
-const pixelDiff = (p1, p2) => ({
-  r: p1.r - p2.r,
-  g: p1.g - p2.g,
-  b: p1.b - p2.b,
-  a: p1.a - p2.a,
-});
-
-// Prime numbers to minimize collisions
-const hash = ({ r, g, b, a }) => (
-  (r * 3 + g * 5 + b * 7 + a * 11) % 64
-);
+const { pixelsMatch, pixelDiff, hash } = require('./util/pixel');
 
 /**
  * Encode a QOI file
@@ -80,10 +55,8 @@ const encode = (imageBuffer, header) => {
   const finalPixel = totalPixels - channels;
 
   // Guard clauses
-  if(imageWidth < 0 || imageWidth >= MAX_INT32)
-    throw new Error(`Invalid header.width, must be within range of a positive 32-bit integer.`);
-  if(imageHeight < 0 || imageHeight >= MAX_INT32)
-    throw new Error(`Invalid header.height, must be within range of a positive 32-bit integer.`);
+  if(imageWidth < 1 || imageHeight < 1 || imageHeight >= QOI_MAX_PIXELS / imageWidth)
+    throw new Error(`Invalid width or height, must be greater than 0 and less than ${QOI_MAX_PIXELS.toLocaleString()}.`);
   if(channels !== QOI_CHANNEL_RGB && channels !== QOI_CHANNEL_RGBA)
     throw new Error(`Invalid header.channels, must be ${QOI_CHANNEL_RGB} or ${QOI_CHANNEL_RGBA}.`);
   if(colorspace !== QOI_SRGB && colorspace !== QOI_LINEAR)
@@ -124,7 +97,7 @@ const encode = (imageBuffer, header) => {
       r: imageBuffer[offset],
       g: imageBuffer[offset + 1],
       b: imageBuffer[offset + 2],
-      a: channels === 4 ? imageBuffer[offset + 3] : prevPixel.a,
+      a: channels === QOI_CHANNEL_RGBA ? imageBuffer[offset + 3] : prevPixel.a,
     };
 
     if(pixelsMatch(pixel, prevPixel)) {

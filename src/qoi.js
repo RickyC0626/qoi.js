@@ -13,8 +13,8 @@ const instructions = `qoi.js CLI for PNG <--> QOI conversion
 
 Usage:
 
-qoi encode <infile> <outfile>
-qoi decode <infile> <outfile>
+qoi encode <infile> [outfile]
+qoi decode <infile> [outfile]
 
 Examples:
   qoi encode input.png output.qoi
@@ -22,7 +22,7 @@ Examples:
 `;
 
 function run() {
-  if(args.length < 3) {
+  if(args.length < 2) {
     console.log(instructions);
     exit(1);
   }
@@ -46,29 +46,26 @@ async function tryEncode() {
 
   try {
     const file = fs.readFileSync(path.resolve(fileToEncode));
-    console.log(file)
-
     const { data, info } = await sharp(file)
       .raw()
       .toBuffer({ resolveWithObject: true });
-    console.log(data);
-    console.log(info);
 
     const qoif = encode(new Uint8Array(data), {
       width: info.width,
       height: info.height,
       channels: info.channels,
     });
-    console.log(qoif);
 
     const fileName = fileToEncode.substring(fileToEncode.lastIndexOf('/') + 1, fileToEncode.lastIndexOf('.'));
     fs.mkdir(`${__dirname}/../out`, { recursive: true }, (err) => {
       if(err) throw err;
-    })
+    });
 
     fs.writeFile(`${__dirname}/../out/${fileName}.qoi`, qoif, (err) => {
       if(err) throw err;
-      logMessage(`Encoded ${fileToEncode} (${info.size} bytes) to ${fileName}.qoi (${qoif.length} bytes)`);
+      logMessage(
+        `Encoded ${fileToEncode} (${file.buffer.byteLength} bytes, ${info.size} raw bytes) to ${fileName}.qoi (${qoif.length} bytes)`
+      );
       exit(0);
     });
   }
@@ -84,9 +81,31 @@ async function tryDecode() {
 
   try {
     const file = fs.readFileSync(path.resolve(fileToDecode));
-    console.log(file)
+    const raw = decode(new Uint8Array(file));
 
-    const rawPixels = decode(new Uint8Array(file));
+    fs.mkdir(`${__dirname}/../out`, { recursive: true }, (err) => {
+      if(err) throw err;
+    });
+
+    const image = sharp(raw.data, {
+      raw: {
+        width: raw.width,
+        height: raw.height,
+        channels: raw.channels,
+      }
+    }).png();
+
+    const fileName = fileToDecode.substring(fileToDecode.lastIndexOf('/') + 1, fileToDecode.lastIndexOf('.'));
+    await image.toFile(`${__dirname}/../out/${fileName}.png`)
+      .then(data => {
+        logMessage(
+          `Decoded ${fileToDecode} (${file.buffer.byteLength} bytes, ${raw.data.length} raw bytes) to ${fileName}.png (${data.size} bytes)`
+        );
+        exit(0);
+      })
+      .catch((err) => {
+        if(err) throw err;
+      });
   }
   catch(err) {
     logError(err, 'decode');
