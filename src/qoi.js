@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { exit } = require('process');
 const { encode } = require('./encoder');
-const { PNG } = require('./util/png');
+const { decode } = require('./decoder');
 const { toGreen, toRed } = require('./util/colors');
 const sharp = require('sharp');
 
@@ -31,10 +31,8 @@ function run() {
 
     if(command === 'encode')
       tryEncode();
-    else if(command === 'decode') {
-      const fileToDecode = args[1];
-      console.log(`Decoding ${fileToDecode}...`);
-    }
+    else if(command === 'decode')
+      tryDecode();
     else {
       console.log(instructions);
       exit(1);
@@ -70,12 +68,28 @@ async function tryEncode() {
 
     fs.writeFile(`${__dirname}/../out/${fileName}.qoi`, qoif, (err) => {
       if(err) throw err;
-      logMessage(`Encoded ${fileToEncode} (${file.buffer.length} bytes) to ${fileName}.qoi (${qoif.length} bytes)`);
+      logMessage(`Encoded ${fileToEncode} (${info.size} bytes) to ${fileName}.qoi (${qoif.length} bytes)`);
       exit(0);
     });
   }
   catch(err) {
     logError(err, 'encode');
+    exit(1);
+  }
+}
+
+async function tryDecode() {
+  const fileToDecode = args[1];
+  logMessage(`Decoding ${fileToDecode}...`);
+
+  try {
+    const file = fs.readFileSync(path.resolve(fileToDecode));
+    console.log(file)
+
+    const rawPixels = decode(new Uint8Array(file));
+  }
+  catch(err) {
+    logError(err, 'decode');
     exit(1);
   }
 }

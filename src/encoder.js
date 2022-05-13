@@ -1,21 +1,20 @@
-const QOI_HEADER_SIZE = 14;
-const QOI_END_MARKER = [0, 0, 0, 0, 0, 0, 0, 1];
-const QOI_END_MARKER_SIZE = QOI_END_MARKER.length;
-
-const MAX_INT32 = 2 ** 32;
-const QOI_SRGB = 0;
-const QOI_LINEAR = 1;
-const QOI_CHANNEL_RGB = 3;
-const QOI_CHANNEL_RGBA = 4;
-
-const QOI_MAGIC_BYTES = 0x716f6966; // qoif
-
-const QOI_OP_INDEX = 0x00;
-const QOI_OP_DIFF = 0x40;
-const QOI_OP_LUMA = 0x80;
-const QOI_OP_RUN = 0xc0;
-const QOI_OP_RGB = 0xfe;
-const QOI_OP_RGBA = 0xff;
+const {
+  QOI_HEADER_SIZE,
+  QOI_END_MARKER,
+  QOI_END_MARKER_SIZE,
+  MAX_INT32,
+  QOI_SRGB,
+  QOI_LINEAR,
+  QOI_CHANNEL_RGB,
+  QOI_CHANNEL_RGBA,
+  QOI_MAGIC_BYTES,
+  QOI_OP_INDEX,
+  QOI_OP_DIFF,
+  QOI_OP_LUMA,
+  QOI_OP_RUN,
+  QOI_OP_RGB,
+  QOI_OP_RGBA,
+} = require('./constants');
 
 const DIFF_CH_DIFF_LOWER_BOUND_RED = -2;
 const DIFF_CH_DIFF_UPPER_BOUND_RED = 1;

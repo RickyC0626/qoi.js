@@ -1,5 +1,14 @@
 const QOI_HEADER_SIZE = 14;
-const QOI_END_MARKER_SIZE = 8;
+const QOI_END_MARKER = [0, 0, 0, 0, 0, 0, 0, 1];
+const QOI_END_MARKER_SIZE = QOI_END_MARKER.length;
+
+const MAX_INT32 = 2 ** 32;
+const QOI_SRGB = 0;
+const QOI_LINEAR = 1;
+const QOI_CHANNEL_RGB = 3;
+const QOI_CHANNEL_RGBA = 4;
+
+const QOI_MAGIC_BYTES = 0x716f6966; // qoif
 
 /*
 .- QOI_OP_INDEX ---------.
@@ -122,35 +131,20 @@ const QOI_OP_RGB = 0xfe;   // 11111110
 */
 const QOI_OP_RGBA = 0xff;  // 11111111
 
-const MAX_INT32 = 2 ** 32;
-const QOI_SRGB = 0;
-const QOI_LINEAR = 1;
-const QOI_CHANNEL_RGB = 3;
-const QOI_CHANNEL_RGBA = 4;
-const QOI_MASK = 0b10000000;
-
-const QOI_MAGIC_Q = 0x71;
-const QOI_MAGIC_O = 0x6f;
-const QOI_MAGIC_I = 0x69;
-const QOI_MAGIC_F = 0x66;
-
 module.exports = {
   QOI_HEADER_SIZE,
+  QOI_END_MARKER,
   QOI_END_MARKER_SIZE,
-  QOI_MAGIC_Q,
-  QOI_MAGIC_O,
-  QOI_MAGIC_I,
-  QOI_MAGIC_F,
+  MAX_INT32,
+  QOI_SRGB,
+  QOI_LINEAR,
+  QOI_CHANNEL_RGB,
+  QOI_CHANNEL_RGBA,
+  QOI_MAGIC_BYTES,
   QOI_OP_INDEX,
   QOI_OP_DIFF,
   QOI_OP_LUMA,
   QOI_OP_RUN,
   QOI_OP_RGB,
   QOI_OP_RGBA,
-  QOI_SRGB,
-  QOI_LINEAR,
-  QOI_CHANNEL_RGB,
-  QOI_CHANNEL_RGBA,
-  QOI_MASK,
-  MAX_INT32,
 };
