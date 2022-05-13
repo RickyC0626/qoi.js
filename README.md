@@ -1,3 +1,5 @@
+<img src="./assets/qoi-logo-black-framed.svg" />
+
 # qoi.js
 [QOI codec](https://github.com/phoboslab/qoi) written in JavaScript.
 
