@@ -1,4 +1,4 @@
-<img src="./assets/qoi-logo-black-framed.svg" />
+<img src="./assets/qoi-logo-gray-framed.svg" />
 
 # qoi.js
 [QOI codec](https://github.com/phoboslab/qoi) written in JavaScript.
