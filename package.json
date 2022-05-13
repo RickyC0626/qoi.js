@@ -6,7 +6,15 @@
   "repository": "git@github.com:RickyC0626/qoi.js.git",
   "author": "Ricky Chon <rickychon99@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
   "dependencies": {
-    "image-size": "^1.0.1"
+    "sharp": "^0.30.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "jest": "^28.1.0"
   }
 }

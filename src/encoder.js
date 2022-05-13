@@ -71,25 +71,25 @@ const encode = (imageBuffer, header) => {
   const imageWidth = header.width;
   const imageHeight = header.height;
   const channels = header.channels || 4;
-  const colorspace = header.colorspace || 1;
+  const colorspace = header.colorspace || QOI_SRGB; // sRGB by default, more web friendly
 
   const totalPixels = imageWidth * imageHeight * channels;;
   const finalPixel = totalPixels - channels;
 
   // Guard clauses
   if(imageWidth < 0 || imageWidth >= MAX_INT32)
-    throw new Error(`Encoding: Invalid header.width, must be within range of a positive 32-bit integer.`);
+    throw new Error(`Invalid header.width, must be within range of a positive 32-bit integer.`);
   if(imageHeight < 0 || imageHeight >= MAX_INT32)
-    throw new Error(`Encoding: Invalid header.height, must be within range of a positive 32-bit integer.`);
+    throw new Error(`Invalid header.height, must be within range of a positive 32-bit integer.`);
   if(channels !== QOI_CHANNEL_RGB && channels !== QOI_CHANNEL_RGBA)
-    throw new Error(`Encoding: Invalid header.channels, must be ${QOI_CHANNEL_RGB} or ${QOI_CHANNEL_RGBA}.`);
+    throw new Error(`Invalid header.channels, must be ${QOI_CHANNEL_RGB} or ${QOI_CHANNEL_RGBA}.`);
   if(colorspace !== QOI_SRGB && colorspace !== QOI_LINEAR)
-    throw new Error(`Encoding: Invalid header.colorspace, must be ${QOI_SRGB} or ${QOI_LINEAR}.`);
+    throw new Error(`Invalid header.colorspace, must be ${QOI_SRGB} or ${QOI_LINEAR}.`);
   if(imageBuffer.constructor.name !== 'Uint8Array' && imageBuffer.constructor.name !== 'Uint8ClampedArray')
-    throw new Error(`Encoding: The provided imageBuffer must be of type Uint8Array or Uint8ClampedArray!`);
+    throw new Error(`The provided imageBuffer must be of type Uint8Array or Uint8ClampedArray!`);
   if(imageBuffer.length !== totalPixels)
     throw new Error(
-      `Encoding: The provided imageBuffer of length ${imageBuffer.length} does not match ${totalPixels} (${imageWidth}*${imageHeight}*${channels}). ` +
+      `The provided imageBuffer of length ${imageBuffer.length} does not match ${totalPixels} (${imageWidth}*${imageHeight}*${channels}). ` +
       'Make sure you are supplying an image binary and the correct headers.'
     );
 
