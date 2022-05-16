@@ -120,7 +120,7 @@ const encode = (buffer, header) => {
         const dr_dg = diff.r - diff.g;
         const db_dg = diff.b - diff.g;
 
-        // Only RGB values provided
+        // Only RGB, no difference in transparency
         if(diff.a === 0) {
           if(possibleDiffChunk(diff)) {
             bytes[p++] = (
