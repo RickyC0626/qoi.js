@@ -25,3 +25,12 @@ describe('pixelDiff', () => {
     expect(pixelDiff(p1, p2)).toEqual(expected);
   });
 });
+
+describe('hash', () => {
+  it('should return the correct hash', () => {
+    const pixel = { r: 10, g: 5, b: 2, a: 0 };
+    const expected = 5;
+
+    expect(hash({ r: pixel.r, g: pixel.g, b: pixel.b, a: pixel.a })).toEqual(expected);
+  });
+});
