@@ -5,9 +5,19 @@
 
 ## Installation
 
-Install dependencies
+Install package
 ```sh
-yarn
+yarn add @rickyc0626/qoi.js
+```
+
+### Using the QOI API
+
+```js
+const { QOI } = require('@rickyc0626/qoi.js');
+
+const header = { width, height, channels, colorspace };
+const encoded = QOI.encode(new Uint8Array(rawPixels), header);
+const decoded = QOI.decode(buffer);
 ```
 
 ### Using the PNG <--> QOI Converter
@@ -29,14 +39,4 @@ Run the following, `outfile` is optional. By default any encoded / decoded files
 ```sh
 node src/qoi encode file.png
 node src/qoi decode file.qoi
-```
-
-### Using the QOI API
-
-```js
-const { QOI } = require('./src');
-
-const header = { width, height, channels, colorspace };
-const encoded = QOI.encode(new Uint8Array(rawPixels), header);
-const decoded = QOI.decode(new Uint8Array(buffer));
 ```
