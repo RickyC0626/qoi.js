@@ -1,4 +1,4 @@
-const { encode, possibleDiffChunk, possibleLumaChunk } = require('../src/encoder');
+const { encode, possibleDiffChunk, possibleLumaChunk, createDiffChunk } = require('../src/encoder');
 
 describe('Encoder', () => {
   describe('Buffer validator', () => {
@@ -85,6 +85,12 @@ describe('Encoder', () => {
         const diff = { r: 10, g: 11, b: -11 };
 
         expect(possibleDiffChunk(diff)).toBeFalsy();
+      });
+
+      it('value should match', () => {
+        const diff = { r: 0, g: 1, b: 1 };
+
+        expect(createDiffChunk(diff)).toEqual(0b01101111);
       });
     });
 

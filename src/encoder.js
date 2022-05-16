@@ -123,12 +123,7 @@ const encode = (buffer, header) => {
         // Only RGB, no difference in transparency
         if(diff.a === 0) {
           if(possibleDiffChunk(diff)) {
-            bytes[p++] = (
-              QOI_OP_DIFF |
-              ((diff.r + DIFF_CH_DIFF_BIAS) << 4) |
-              ((diff.g + DIFF_CH_DIFF_BIAS) << 2) |
-              (diff.b + DIFF_CH_DIFF_BIAS)
-            );
+            bytes[p++] = createDiffChunk(diff);
           }
           else if(possibleLumaChunk(diff, dr_dg, db_dg)) {
             bytes[p++] = QOI_OP_LUMA | (diff.g + LUMA_CH_DIFF_BIAS_GREEN);
@@ -187,6 +182,13 @@ const possibleDiffChunk = (diff) => (
   (diff.b >= DIFF_CH_DIFF_LOWER_BOUND_BLUE && diff.b <= DIFF_CH_DIFF_UPPER_BOUND_BLUE)
 );
 
+const createDiffChunk = (diff) => (
+  QOI_OP_DIFF |
+  ((diff.r + DIFF_CH_DIFF_BIAS) << 4) |
+  ((diff.g + DIFF_CH_DIFF_BIAS) << 2) |
+  (diff.b + DIFF_CH_DIFF_BIAS)
+);
+
 const possibleLumaChunk = (diff, dr_dg, db_dg) => (
   (diff.g >= LUMA_CH_DIFF_LOWER_BOUND_GREEN && diff.g <= LUMA_CH_DIFF_UPPER_BOUND_GREEN) &&
   (dr_dg >= LUMA_CH_DIFF_LOWER_BOUND && dr_dg <= LUMA_CH_DIFF_UPPER_BOUND) &&
@@ -196,5 +198,6 @@ const possibleLumaChunk = (diff, dr_dg, db_dg) => (
 module.exports = {
   encode,
   possibleDiffChunk,
+  createDiffChunk,
   possibleLumaChunk,
 };
