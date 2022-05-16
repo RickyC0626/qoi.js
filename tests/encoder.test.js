@@ -14,20 +14,20 @@ describe('Encoder', () => {
     it('should throw error if buffer is not Uint8Array nor Uint8ClampedArray', () => {
       const buffer = [];
       const header = { width: 1, height: 1, channels: 4, colorspace: 0 };
+      const expected =
+        'The provided buffer must be one of these types: [Uint8Array,Uint8ClampedArray]';
 
-      expect(() => encode(buffer, header)).toThrowError(
-        'The provided buffer must be one of these types: [Uint8Array,Uint8ClampedArray]'
-      );
+      expect(() => encode(buffer, header)).toThrowError(expected);
     });
 
     it('should throw error if buffer length does not match total pixels', () => {
       const buffer = new Uint8Array(4);
       const header = { width: 1, height: 2, channels: 4, colorspace: 0 };
-
-      expect(() => encode(buffer, header)).toThrowError(
+      const expected =
         'The provided buffer with length 4 does not match 8 total pixels. ' +
-        'Make sure you are supplying an image binary and the correct headers.'
-      );
+        'Make sure you are supplying an image binary and the correct headers.';
+
+      expect(() => encode(buffer, header)).toThrowError(expected);
     });
   });
 
@@ -35,50 +35,48 @@ describe('Encoder', () => {
     it('should throw error if image width is not a positive number', () => {
       const buffer = new Uint8Array(0);
       const header = { width: 0, height: 1, channels: 4, colorspace: 0 };
+      const expected =
+        'Invalid image dimensions, must be in the range of 1..399,999,999';
 
-      expect(() => encode(buffer, header)).toThrowError(
-        'Invalid image dimensions, must be in the range of 1..399,999,999'
-      );
+      expect(() => encode(buffer, header)).toThrowError(expected);
     });
 
     it('should throw error if image height is not a positive number', () => {
       const buffer = new Uint8Array(0);
       const header = { width: 1, height: 0, channels: 4, colorspace: 0 };
+      const expected =
+        'Invalid image dimensions, must be in the range of 1..399,999,999';
 
-      expect(() => encode(buffer, header)).toThrowError(
-        'Invalid image dimensions, must be in the range of 1..399,999,999'
-      );
+      expect(() => encode(buffer, header)).toThrowError(expected);
     });
 
     it('should throw error if total pixels >= 400 million', () => {
       const buffer = new Uint8Array(1200000000);
       const header1 = { width: 400000000, height: 1, channels: 3, colorspace: 0 };
       const header2 = { width: 1, height: 400000000, channels: 3, colorspace: 0 };
+      const expected =
+        'Invalid image dimensions, must be in the range of 1..399,999,999';
 
-      expect(() => encode(buffer, header1)).toThrowError(
-        'Invalid image dimensions, must be in the range of 1..399,999,999'
-      );
-      expect(() => encode(buffer, header2)).toThrowError(
-        'Invalid image dimensions, must be in the range of 1..399,999,999'
-      );
+      expect(() => encode(buffer, header1)).toThrowError(expected);
+      expect(() => encode(buffer, header2)).toThrowError(expected);
     });
 
     it('should throw error if "channels" is not 3 (RGB) or 4 (RGBA)', () => {
       const buffer = new Uint8Array(2);
       const header = { width: 1, height: 1, channels: 2, colorspace: 0 };
+      const expected =
+        'Invalid channels in header, must be one of the following: [3,4]';
 
-      expect(() => encode(buffer, header)).toThrowError(
-        'Invalid channels in header, must be one of the following: [3,4]'
-      );
+      expect(() => encode(buffer, header)).toThrowError(expected);
     });
 
     it('should throw error if colorspace is neither 0 (sRGB) nor 1 (linear)', () => {
       const buffer = new Uint8Array(4);
       const header = { width: 1, height: 1, channels: 4, colorspace: -1 };
+      const expected =
+        'Invalid colorspace in header, must be one of the following: [0,1]';
 
-      expect(() => encode(buffer, header)).toThrowError(
-        'Invalid colorspace in header, must be one of the following: [0,1]'
-      );
+      expect(() => encode(buffer, header)).toThrowError(expected);
     });
   });
 
@@ -98,8 +96,14 @@ describe('Encoder', () => {
 
       it('should match binary value', () => {
         const diff = { r: 0, g: 1, b: 1 };
+        // QOI_OP_DIFF = 01
+        // r = 0 + 2 = 10
+        // g = 1 + 2 = 11
+        // b = 1 + 2 = 11
+        // chunk = 01 10 11 11
+        const expected = 0b01101111;
 
-        expect(createDiffChunk(diff)).toEqual(0b01101111);
+        expect(createDiffChunk(diff)).toEqual(expected);
       });
     });
 
@@ -122,31 +126,47 @@ describe('Encoder', () => {
 
       it('first half should match binary value', () => {
         const diff = { g: 0 };
+        // QOI_OP_LUMA = 10
+        // diff.g = 0 + 32 = 100000
+        // first chunk = 10 100000
+        const expected = 0b10100000;
 
-        expect(createLumaChunk1(diff)).toEqual(0b10100000);
+        expect(createLumaChunk1(diff)).toEqual(expected);
       });
 
       it('second half should match binary value', () => {
         const dr_dg = -6;
         const db_dg = 4;
+        // dr_dg = -6 + 8 = 2 = 0010
+        // db_dg = 4 + 8 = 12 = 1100
+        // second chunk = 0010 1100
+        const expected = 0b00101100;
 
-        expect(createLumaChunk2(dr_dg, db_dg)).toEqual(0b00101100);
+        expect(createLumaChunk2(dr_dg, db_dg)).toEqual(expected);
       });
     });
 
     describe('QOI_OP_RUN', () => {
       it('should match binary value', () => {
         const run = 9;
+        // QOI_OP_RUN = 11
+        // run = 9 - 1 = 8 = 001000
+        // chunk = 11 001000
+        const expected = 0b11001000;
 
-        expect(createRunChunk(run)).toEqual(0b11001000);
+        expect(createRunChunk(run)).toEqual(expected);
       });
     });
 
     describe('QOI_OP_INDEX', () => {
       it('should match binary value', () => {
         const hash = 24;
+        // QOI_OP_INDEX = 00
+        // hash = 24 = 011000
+        // chunk = 00 011000
+        const expected = 0b00011000;
 
-        expect(createIndexChunk(hash)).toEqual(0b00011000);
+        expect(createIndexChunk(hash)).toEqual(expected);
       })
     });
   });
