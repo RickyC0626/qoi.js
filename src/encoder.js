@@ -43,7 +43,7 @@ const { pixelsMatch, pixelDiff, hash } = require('./util/pixel');
 /**
  * Encode a QOI file
  *
- * @param {Uint8Array|Uint8ClampedArray} imageBuffer Array containing colors of each pixel in image
+ * @param {Uint8Array|Uint8ClampedArray} buffer Array containing colors of each pixel in image
  * @param {object} header QOI header
  * @param {int} header.width Image width in pixels (32-bit Big Endian)
  * @param {int} header.height Image height in pixels (32-bit Big Endian)
@@ -52,7 +52,7 @@ const { pixelsMatch, pixelDiff, hash } = require('./util/pixel');
  *
  * @returns {ArrayBuffer} ArrayBuffer containing QOI file contents
  */
-const encode = (imageBuffer, header) => {
+const encode = (buffer, header) => {
   const width = header.width;
   const height = header.height;
   const channels = header.channels || QOI_CHANNEL_RGBA;
@@ -61,7 +61,7 @@ const encode = (imageBuffer, header) => {
   const totalPixels = width * height * channels;;
   const finalPixel = totalPixels - channels;
 
-  validateBuffer(imageBuffer, { totalPixels });
+  validateBuffer(buffer, { totalPixels });
   validateHeader(header);
 
   const maxSize = width * height * (channels + 1) + QOI_HEADER_SIZE + QOI_END_MARKER_SIZE;
@@ -89,10 +89,10 @@ const encode = (imageBuffer, header) => {
   // Write data chunks
   for(let offset = 0; offset <= finalPixel; offset += channels) {
     const pixel = {
-      r: imageBuffer[offset],
-      g: imageBuffer[offset + 1],
-      b: imageBuffer[offset + 2],
-      a: channels === QOI_CHANNEL_RGBA ? imageBuffer[offset + 3] : prevPixel.a,
+      r: buffer[offset],
+      g: buffer[offset + 1],
+      b: buffer[offset + 2],
+      a: channels === QOI_CHANNEL_RGBA ? buffer[offset + 3] : prevPixel.a,
     };
 
     if(pixelsMatch(pixel, prevPixel)) {
