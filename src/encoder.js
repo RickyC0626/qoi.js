@@ -72,8 +72,6 @@ const encode = (buffer, header) => {
   let p = 0;
   let run = 0;
 
-  // Can write up to 4.29 billion unsigned ints, but
-  // max pixels should prevent it going over 1.6 billion
   const write32 = (val) => {
     bytes[p++] = (val & 0xff000000) >> 24; // 1st byte
     bytes[p++] = (val & 0x00ff0000) >> 16; // 2nd byte
