@@ -31,6 +31,13 @@ const {
   RUN_LENGTH_UPPER_BOUND,
   RUN_LENGTH_BIAS,
 } = require('./constants');
+const {
+  INVALID_BUFFER_TYPE,
+  INVALID_BUFFER_LENGTH,
+  INVALID_IMAGE_DIMENSIONS,
+  INVALID_CHANNELS,
+  INVALID_COLORSPACE
+} = require('./util/errors');
 const { pixelsMatch, pixelDiff, hash } = require('./util/pixel');
 
 /**
@@ -46,30 +53,18 @@ const { pixelsMatch, pixelDiff, hash } = require('./util/pixel');
  * @returns {ArrayBuffer} ArrayBuffer containing QOI file contents
  */
 const encode = (imageBuffer, header) => {
-  const imageWidth = header.width;
-  const imageHeight = header.height;
+  const width = header.width;
+  const height = header.height;
   const channels = header.channels || QOI_CHANNEL_RGBA;
   const colorspace = header.colorspace || QOI_SRGB; // sRGB by default, more web friendly
 
-  const totalPixels = imageWidth * imageHeight * channels;;
+  const totalPixels = width * height * channels;;
   const finalPixel = totalPixels - channels;
 
-  // Guard clauses
-  if(imageWidth < 1 || imageHeight < 1 || imageHeight >= QOI_MAX_PIXELS / imageWidth)
-    throw new Error(`Invalid width or height, must be greater than 0 and less than ${QOI_MAX_PIXELS.toLocaleString()}.`);
-  if(channels !== QOI_CHANNEL_RGB && channels !== QOI_CHANNEL_RGBA)
-    throw new Error(`Invalid header.channels, must be ${QOI_CHANNEL_RGB} or ${QOI_CHANNEL_RGBA}.`);
-  if(colorspace !== QOI_SRGB && colorspace !== QOI_LINEAR)
-    throw new Error(`Invalid header.colorspace, must be ${QOI_SRGB} or ${QOI_LINEAR}.`);
-  if(imageBuffer.constructor.name !== 'Uint8Array' && imageBuffer.constructor.name !== 'Uint8ClampedArray')
-    throw new Error(`The provided imageBuffer must be of type Uint8Array or Uint8ClampedArray!`);
-  if(imageBuffer.length !== totalPixels)
-    throw new Error(
-      `The provided imageBuffer of length ${imageBuffer.length} does not match ${totalPixels} (${imageWidth}*${imageHeight}*${channels}). ` +
-      'Make sure you are supplying an image binary and the correct headers.'
-    );
+  validateBuffer(imageBuffer, { totalPixels });
+  validateHeader(header);
 
-  const maxSize = imageWidth * imageHeight * (channels + 1) + QOI_HEADER_SIZE + QOI_END_MARKER_SIZE;
+  const maxSize = width * height * (channels + 1) + QOI_HEADER_SIZE + QOI_END_MARKER_SIZE;
   const bytes = new Uint8Array(maxSize);
   const seenPixels = Array.from(new Array(64), () => ({ r: 0, g: 0, b: 0, a: 0 }));
 
@@ -86,8 +81,8 @@ const encode = (imageBuffer, header) => {
 
   // Write header, 14 bytes
   write32(QOI_MAGIC_BYTES); // 0 -> 3
-  write32(imageWidth); // 4 -> 7
-  write32(imageHeight); // 8 -> 11
+  write32(width); // 4 -> 7
+  write32(height); // 8 -> 11
   bytes[p++] = channels; // 12
   bytes[p++] = colorspace; // 13
 
@@ -172,6 +167,26 @@ const encode = (imageBuffer, header) => {
   });
 
   return bytes.slice(0, p);
+};
+
+const validateBuffer = (buffer, data) => {
+  const { totalPixels } = data;
+
+  if(buffer.constructor.name !== 'Uint8Array' && buffer.constructor.name !== 'Uint8ClampedArray')
+    throw INVALID_BUFFER_TYPE(['Uint8Array', 'Uint8ClampedArray']);
+  if(buffer.length !== totalPixels)
+    throw INVALID_BUFFER_LENGTH(buffer.length, totalPixels);
+};
+
+const validateHeader = (header) => {
+  const { width, height, channels, colorspace } = header;
+
+  if(width < 1 || height < 1 || width * height >= QOI_MAX_PIXELS)
+    throw INVALID_IMAGE_DIMENSIONS(1, (QOI_MAX_PIXELS - 1).toLocaleString());
+  if(channels !== QOI_CHANNEL_RGB && channels !== QOI_CHANNEL_RGBA)
+    throw INVALID_CHANNELS([QOI_CHANNEL_RGB, QOI_CHANNEL_RGBA]);
+  if(colorspace !== QOI_SRGB && colorspace !== QOI_LINEAR)
+    throw INVALID_COLORSPACE([QOI_SRGB, QOI_LINEAR]);
 };
 
 module.exports = { encode };
