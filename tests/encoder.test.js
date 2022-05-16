@@ -1,4 +1,4 @@
-const { encode } = require('../src/encoder');
+const { encode, possibleDiffChunk, possibleLumaChunk } = require('../src/encoder');
 
 describe('Encoder', () => {
   describe('Buffer validator', () => {
@@ -70,6 +70,40 @@ describe('Encoder', () => {
       expect(() => encode(buffer, header)).toThrowError(
         'Invalid colorspace in header, must be one of the following: [0,1]'
       );
+    });
+  });
+
+  describe('Data chunk', () => {
+    describe('QOI_OP_DIFF', () => {
+      it('should be used if pixel diff is within range', () => {
+        const diff = { r: 0, g: 1, b: -1 };
+
+        expect(possibleDiffChunk(diff)).toBeTruthy();
+      });
+
+      it('should not be used if pixel diff is out of range', () => {
+        const diff = { r: 10, g: 11, b: -11 };
+
+        expect(possibleDiffChunk(diff)).toBeFalsy();
+      });
+    });
+
+    describe('QOI_OP_LUMA', () => {
+      it('should be used if pixel diff is within range', () => {
+        const diff = { g: 30 };
+        const dr_dg = -4;
+        const db_dg = 6;
+
+        expect(possibleLumaChunk(diff, dr_dg, db_dg)).toBeTruthy();
+      });
+
+      it('should not be used if pixel diff is out of range', () => {
+        const diff = { g: 50 };
+        const dr_dg = 10;
+        const db_dg = -20;
+
+        expect(possibleLumaChunk(diff, dr_dg, db_dg)).toBeFalsy();
+      });
     });
   });
 });

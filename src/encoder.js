@@ -122,11 +122,7 @@ const encode = (buffer, header) => {
 
         // Only RGB values provided
         if(diff.a === 0) {
-          if(
-            (diff.r >= DIFF_CH_DIFF_LOWER_BOUND_RED && diff.r <= DIFF_CH_DIFF_UPPER_BOUND_RED) &&
-            (diff.g >= DIFF_CH_DIFF_LOWER_BOUND_GREEN && diff.g <= DIFF_CH_DIFF_UPPER_BOUND_GREEN) &&
-            (diff.b >= DIFF_CH_DIFF_LOWER_BOUND_BLUE && diff.b <= DIFF_CH_DIFF_UPPER_BOUND_BLUE)
-          ) {
+          if(possibleDiffChunk(diff)) {
             bytes[p++] = (
               QOI_OP_DIFF |
               ((diff.r + DIFF_CH_DIFF_BIAS) << 4) |
@@ -134,11 +130,7 @@ const encode = (buffer, header) => {
               (diff.b + DIFF_CH_DIFF_BIAS)
             );
           }
-          else if(
-            (diff.g >= LUMA_CH_DIFF_LOWER_BOUND_GREEN && diff.g <= LUMA_CH_DIFF_UPPER_BOUND_GREEN) &&
-            (dr_dg >= LUMA_CH_DIFF_LOWER_BOUND && dr_dg <= LUMA_CH_DIFF_UPPER_BOUND) &&
-            (db_dg >= LUMA_CH_DIFF_LOWER_BOUND && db_dg <= LUMA_CH_DIFF_UPPER_BOUND)
-          ) {
+          else if(possibleLumaChunk(diff, dr_dg, db_dg)) {
             bytes[p++] = QOI_OP_LUMA | (diff.g + LUMA_CH_DIFF_BIAS_GREEN);
             bytes[p++] = ((dr_dg + LUMA_CH_DIFF_BIAS) << 4) | (db_dg + LUMA_CH_DIFF_BIAS);
           }
@@ -189,4 +181,20 @@ const validateHeader = (header) => {
     throw INVALID_COLORSPACE([QOI_SRGB, QOI_LINEAR]);
 };
 
-module.exports = { encode };
+const possibleDiffChunk = (diff) => (
+  (diff.r >= DIFF_CH_DIFF_LOWER_BOUND_RED && diff.r <= DIFF_CH_DIFF_UPPER_BOUND_RED) &&
+  (diff.g >= DIFF_CH_DIFF_LOWER_BOUND_GREEN && diff.g <= DIFF_CH_DIFF_UPPER_BOUND_GREEN) &&
+  (diff.b >= DIFF_CH_DIFF_LOWER_BOUND_BLUE && diff.b <= DIFF_CH_DIFF_UPPER_BOUND_BLUE)
+);
+
+const possibleLumaChunk = (diff, dr_dg, db_dg) => (
+  (diff.g >= LUMA_CH_DIFF_LOWER_BOUND_GREEN && diff.g <= LUMA_CH_DIFF_UPPER_BOUND_GREEN) &&
+  (dr_dg >= LUMA_CH_DIFF_LOWER_BOUND && dr_dg <= LUMA_CH_DIFF_UPPER_BOUND) &&
+  (db_dg >= LUMA_CH_DIFF_LOWER_BOUND && db_dg <= LUMA_CH_DIFF_UPPER_BOUND)
+);
+
+module.exports = {
+  encode,
+  possibleDiffChunk,
+  possibleLumaChunk,
+};
