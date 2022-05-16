@@ -110,8 +110,11 @@ const encode = (buffer, header) => {
       }
 
       const h = hash({ r: pixel.r, g: pixel.g, b: pixel.b, a: pixel.a });
+
+      // Hash should minimize collisions, should not issue 2 or more
+      // consecutive index chunks to the same index
       if(pixelsMatch(pixel, seenPixels[h])) {
-        bytes[p++] = QOI_OP_INDEX | h;
+        bytes[p++] = createIndexChunk(h);
       }
       else {
         seenPixels[h] = {...pixel};
@@ -207,6 +210,10 @@ const createRunChunk = (run) => (
   QOI_OP_RUN | (run + RUN_LENGTH_BIAS)
 );
 
+const createIndexChunk = (hash) => (
+  QOI_OP_INDEX | hash
+);
+
 module.exports = {
   encode,
   possibleDiffChunk,
@@ -215,4 +222,5 @@ module.exports = {
   createLumaChunk1,
   createLumaChunk2,
   createRunChunk,
+  createIndexChunk,
 };

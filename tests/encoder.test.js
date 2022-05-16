@@ -5,7 +5,8 @@ const {
   createDiffChunk,
   createLumaChunk1,
   createLumaChunk2,
-  createRunChunk
+  createRunChunk,
+  createIndexChunk
 } = require('../src/encoder');
 
 describe('Encoder', () => {
@@ -139,6 +140,14 @@ describe('Encoder', () => {
 
         expect(createRunChunk(run)).toEqual(0b11001000);
       });
+    });
+
+    describe('QOI_OP_INDEX', () => {
+      it('should match binary value', () => {
+        const hash = 24;
+
+        expect(createIndexChunk(hash)).toEqual(0b00011000);
+      })
     });
   });
 });
