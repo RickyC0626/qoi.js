@@ -1,4 +1,12 @@
-const { encode, possibleDiffChunk, possibleLumaChunk, createDiffChunk, createLumaChunk1, createLumaChunk2 } = require('../src/encoder');
+const {
+  encode,
+  possibleDiffChunk,
+  possibleLumaChunk,
+  createDiffChunk,
+  createLumaChunk1,
+  createLumaChunk2,
+  createRunChunk
+} = require('../src/encoder');
 
 describe('Encoder', () => {
   describe('Buffer validator', () => {
@@ -122,6 +130,14 @@ describe('Encoder', () => {
         const db_dg = 4;
 
         expect(createLumaChunk2(dr_dg, db_dg)).toEqual(0b00101100);
+      });
+    });
+
+    describe('QOI_OP_RUN', () => {
+      it('should match binary value', () => {
+        const run = 9;
+
+        expect(createRunChunk(run)).toEqual(0b11001000);
       });
     });
   });

@@ -99,13 +99,13 @@ const encode = (buffer, header) => {
       run++;
 
       if(run === RUN_LENGTH_UPPER_BOUND || offset === finalPixel) {
-        bytes[p++] = QOI_OP_RUN | (run + RUN_LENGTH_BIAS);
+        bytes[p++] = createRunChunk(run);
         run = 0;
       }
     }
     else {
       if(run >= RUN_LENGTH_LOWER_BOUND) {
-        bytes[p++] = QOI_OP_RUN | (run + RUN_LENGTH_BIAS);
+        bytes[p++] = createRunChunk(run);
         run = 0;
       }
 
@@ -203,6 +203,10 @@ const createLumaChunk2 = (dr_dg, db_dg) => (
   ((dr_dg + LUMA_CH_DIFF_BIAS) << 4) | (db_dg + LUMA_CH_DIFF_BIAS)
 );
 
+const createRunChunk = (run) => (
+  QOI_OP_RUN | (run + RUN_LENGTH_BIAS)
+);
+
 module.exports = {
   encode,
   possibleDiffChunk,
@@ -210,4 +214,5 @@ module.exports = {
   possibleLumaChunk,
   createLumaChunk1,
   createLumaChunk2,
+  createRunChunk,
 };
