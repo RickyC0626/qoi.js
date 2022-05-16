@@ -127,7 +127,7 @@ const encode = (buffer, header) => {
           }
           else if(possibleLumaChunk(diff, dr_dg, db_dg)) {
             bytes[p++] = createLumaChunk1(diff);
-            bytes[p++] = ((dr_dg + LUMA_CH_DIFF_BIAS) << 4) | (db_dg + LUMA_CH_DIFF_BIAS);
+            bytes[p++] = createLumaChunk2(dr_dg, db_dg);
           }
           else {
             bytes[p++] = QOI_OP_RGB;
@@ -199,10 +199,15 @@ const createLumaChunk1 = (diff) => (
   QOI_OP_LUMA | (diff.g + LUMA_CH_DIFF_BIAS_GREEN)
 );
 
+const createLumaChunk2 = (dr_dg, db_dg) => (
+  ((dr_dg + LUMA_CH_DIFF_BIAS) << 4) | (db_dg + LUMA_CH_DIFF_BIAS)
+);
+
 module.exports = {
   encode,
   possibleDiffChunk,
   createDiffChunk,
   possibleLumaChunk,
   createLumaChunk1,
+  createLumaChunk2,
 };

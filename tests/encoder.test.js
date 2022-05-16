@@ -1,4 +1,4 @@
-const { encode, possibleDiffChunk, possibleLumaChunk, createDiffChunk, createLumaChunk1 } = require('../src/encoder');
+const { encode, possibleDiffChunk, possibleLumaChunk, createDiffChunk, createLumaChunk1, createLumaChunk2 } = require('../src/encoder');
 
 describe('Encoder', () => {
   describe('Buffer validator', () => {
@@ -87,7 +87,7 @@ describe('Encoder', () => {
         expect(possibleDiffChunk(diff)).toBeFalsy();
       });
 
-      it('value should match', () => {
+      it('should match binary value', () => {
         const diff = { r: 0, g: 1, b: 1 };
 
         expect(createDiffChunk(diff)).toEqual(0b01101111);
@@ -111,10 +111,17 @@ describe('Encoder', () => {
         expect(possibleLumaChunk(diff, dr_dg, db_dg)).toBeFalsy();
       });
 
-      it('first half should match value', () => {
+      it('first half should match binary value', () => {
         const diff = { g: 0 };
 
         expect(createLumaChunk1(diff)).toEqual(0b10100000);
+      });
+
+      it('second half should match binary value', () => {
+        const dr_dg = -6;
+        const db_dg = 4;
+
+        expect(createLumaChunk2(dr_dg, db_dg)).toEqual(0b00101100);
       });
     });
   });
