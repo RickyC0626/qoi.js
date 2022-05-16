@@ -126,7 +126,7 @@ const encode = (buffer, header) => {
             bytes[p++] = createDiffChunk(diff);
           }
           else if(possibleLumaChunk(diff, dr_dg, db_dg)) {
-            bytes[p++] = QOI_OP_LUMA | (diff.g + LUMA_CH_DIFF_BIAS_GREEN);
+            bytes[p++] = createLumaChunk1(diff);
             bytes[p++] = ((dr_dg + LUMA_CH_DIFF_BIAS) << 4) | (db_dg + LUMA_CH_DIFF_BIAS);
           }
           else {
@@ -195,9 +195,14 @@ const possibleLumaChunk = (diff, dr_dg, db_dg) => (
   (db_dg >= LUMA_CH_DIFF_LOWER_BOUND && db_dg <= LUMA_CH_DIFF_UPPER_BOUND)
 );
 
+const createLumaChunk1 = (diff) => (
+  QOI_OP_LUMA | (diff.g + LUMA_CH_DIFF_BIAS_GREEN)
+);
+
 module.exports = {
   encode,
   possibleDiffChunk,
   createDiffChunk,
   possibleLumaChunk,
+  createLumaChunk1,
 };
