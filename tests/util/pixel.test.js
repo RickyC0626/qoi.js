@@ -31,6 +31,6 @@ describe('hash', () => {
     const pixel = { r: 10, g: 5, b: 2, a: 0 };
     const expected = 5;
 
-    expect(hash({ r: pixel.r, g: pixel.g, b: pixel.b, a: pixel.a })).toEqual(expected);
+    expect(hash(pixel)).toEqual(expected);
   });
 });
