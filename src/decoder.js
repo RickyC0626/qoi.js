@@ -69,6 +69,8 @@ const decode = (buffer) => {
     else if(p < chunkLength) {
       const byte = bytes[p++];
 
+      // 8-bit chunk tags have precedence over 2-bit tags
+      // RGB and RGBA chunks
       if(byte === QOI_OP_RGB) {
         prevPixel.r = bytes[p++];
         prevPixel.g = bytes[p++];
