@@ -29,4 +29,4 @@ jobs:
       - name: Publish package to registry
         run: yarn publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}
