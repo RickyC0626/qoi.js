@@ -1,6 +1,6 @@
 {
   "name": "@rickyc0626/qoi.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "QOI codec written in JavaScript",
   "main": "index.js",
   "repository": "git@github.com:RickyC0626/qoi.js.git",
@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "publish-npm": "npm publish --access public --ignore-scripts --@rickyc0626:registry='https://registry.npmjs.org'",
+    "postpublish": "npm run publish-npm"
   },
   "dependencies": {
     "sharp": "^0.30.4"
@@ -18,8 +20,16 @@
     "jest": "^28.1.0"
   },
   "files": [
-    "src",
-    "tests",
-    "tools"
+    "src"
+  ],
+  "keywords": [
+    "qoi",
+    "image-compression",
+    "image",
+    "compression",
+    "codec",
+    "encoder",
+    "decoder",
+    "javascript"
   ]
 }

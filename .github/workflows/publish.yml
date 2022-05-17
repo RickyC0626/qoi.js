@@ -1,0 +1,33 @@
+name: Publish Package
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Clean install package
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Set package registry
+        run: npm config set registry https://npm.pkg.github.com
+
+      - name: GitHub Packages registry authentication
+        run: npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+
+      - name: NPM registry authentication
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish package to registries
+        run: npm publish
