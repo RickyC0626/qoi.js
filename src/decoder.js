@@ -15,17 +15,23 @@ const {
   LUMA_CH_DIFF_BIAS_GREEN,
   LUMA_CH_DIFF_BIAS,
 } = require('./constants');
+const {
+  INVALID_FILE_SIGNATURE,
+  INVALID_IMAGE_DIMENSIONS,
+  INVALID_CHANNELS,
+  INVALID_COLORSPACE
+} = require('./util/errors');
 const { hash } = require('./util/pixel');
 
 /**
  * Decode a QOI file
  *
- * @param {Uint8Array|Uint8ClampedArray} imageBuffer Array containing colors of each pixel in image
+ * @param {Uint8Array|Uint8ClampedArray} buffer Array containing colors of each pixel in image
  *
  * @returns {object} Object containing raw pixels and additional image data
  */
-const decode = (imageBuffer) => {
-  const bytes = new Uint8Array(imageBuffer);
+const decode = (buffer) => {
+  const bytes = new Uint8Array(buffer);
   let p = 0;
 
   const read32 = () => {
@@ -43,14 +49,7 @@ const decode = (imageBuffer) => {
   const channels = bytes[p++]; // 12
   const colorspace = bytes[p++]; // 13
 
-  if(magic !== QOI_MAGIC_BYTES)
-    throw new Error('Cannot decode, file header does not contain QOI signature.');
-  if(width < 1 || height < 1 || height >= QOI_MAX_PIXELS / width)
-    throw new Error(`Invalid width or height, must be greater than 0 and less than ${QOI_MAX_PIXELS.toLocaleString()}.`);
-  if(channels !== QOI_CHANNEL_RGB && channels !== QOI_CHANNEL_RGBA)
-    throw new Error(`Invalid channels, must be ${QOI_CHANNEL_RGB} or ${QOI_CHANNEL_RGBA}.`);
-  if(colorspace !== QOI_SRGB && colorspace !== QOI_LINEAR)
-    throw new Error(`Invalid colorspace, must be ${QOI_SRGB} or ${QOI_LINEAR}.`);
+  validateHeader({ magic, width, height, channels, colorspace });
 
   const totalPixels = width * height * channels;
   const pixels = new Uint8Array(totalPixels);
@@ -70,6 +69,8 @@ const decode = (imageBuffer) => {
     else if(p < chunkLength) {
       const byte = bytes[p++];
 
+      // 8-bit chunk tags have precedence over 2-bit tags
+      // RGB and RGBA chunks
       if(byte === QOI_OP_RGB) {
         prevPixel.r = bytes[p++];
         prevPixel.g = bytes[p++];
@@ -142,6 +143,19 @@ const decode = (imageBuffer) => {
     channels: channels,
     colorspace: colorspace,
   };
+};
+
+const validateHeader = (header) => {
+  const { magic, width, height, channels, colorspace } = header;
+
+  if(magic !== QOI_MAGIC_BYTES)
+    throw INVALID_FILE_SIGNATURE;
+  if(width < 1 || height < 1 || width * height >= QOI_MAX_PIXELS)
+    throw INVALID_IMAGE_DIMENSIONS(1, (QOI_MAX_PIXELS - 1).toLocaleString());
+  if(channels !== QOI_CHANNEL_RGB && channels !== QOI_CHANNEL_RGBA)
+    throw INVALID_CHANNELS([QOI_CHANNEL_RGB, QOI_CHANNEL_RGBA]);
+  if(colorspace !== QOI_SRGB && colorspace !== QOI_LINEAR)
+    throw INVALID_COLORSPACE([QOI_SRGB, QOI_LINEAR]);
 };
 
 module.exports = { decode };
