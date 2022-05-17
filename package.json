@@ -8,9 +8,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch",
-    "publish-npm": "npm publish --access public --ignore-scripts --@rickyc0626:registry='https://registry.npmjs.org'",
-    "postpublish": "npm run publish-npm"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "sharp": "^0.30.4"
