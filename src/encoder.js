@@ -119,12 +119,12 @@ const encode = (buffer, header) => {
       else {
         seenPixels[h] = {...pixel};
 
-        const diff = pixelDiff(pixel, prevPixel);
-        const dr_dg = diff.r - diff.g;
-        const db_dg = diff.b - diff.g;
-
         // Only RGB, no difference in transparency
         if(diff.a === 0) {
+          const diff = pixelDiff(pixel, prevPixel);
+          const dr_dg = diff.r - diff.g;
+          const db_dg = diff.b - diff.g;
+
           if(possibleDiffChunk(diff)) {
             bytes[p++] = createDiffChunk(diff);
           }
