@@ -120,16 +120,12 @@ const decode = (buffer) => {
       seenPixels[seenIndex + 3] = prevPixel.a;
     }
 
+    pixels[pixelPos] = prevPixel.r;
+    pixels[pixelPos + 1] = prevPixel.g;
+    pixels[pixelPos + 2] = prevPixel.b;
+
     if(channels === QOI_CHANNEL_RGBA) {
-      pixels[pixelPos] = prevPixel.r;
-      pixels[pixelPos + 1] = prevPixel.g;
-      pixels[pixelPos + 2] = prevPixel.b;
       pixels[pixelPos + 3] = prevPixel.a;
-    }
-    else {
-      pixels[pixelPos] = prevPixel.r;
-      pixels[pixelPos + 1] = prevPixel.g;
-      pixels[pixelPos + 2] = prevPixel.b;
     }
   }
 
