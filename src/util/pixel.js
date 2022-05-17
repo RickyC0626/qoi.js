@@ -17,8 +17,8 @@ const pixelDiff = (p1, p2) => ({
 });
 
 // Prime numbers to minimize collisions
-const hash = ({ r, g, b, a }) => (
-  (r * 3 + g * 5 + b * 7 + a * 11) % 64
+const hash = (pixel) => (
+  (pixel.r * 3 + pixel.g * 5 + pixel.b * 7 + pixel.a * 11) % 64
 );
 
 module.exports = { pixelsMatch, pixelDiff, hash };

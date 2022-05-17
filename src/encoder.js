@@ -109,7 +109,7 @@ const encode = (buffer, header) => {
         run = 0;
       }
 
-      const h = hash({ r: pixel.r, g: pixel.g, b: pixel.b, a: pixel.a });
+      const h = hash(pixel);
 
       // Hash should minimize collisions, should not issue 2 or more
       // consecutive index chunks to the same index
