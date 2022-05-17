@@ -19,10 +19,13 @@ const INVALID_COLORSPACE = (...validColorspaces) => (
   `Invalid colorspace in header, must be one of the following: [${validColorspaces}]`
 );
 
+const INVALID_FILE_SIGNATURE = 'Cannot decode, file header does not contain QOI signature.';
+
 module.exports = {
   INVALID_BUFFER_TYPE,
   INVALID_BUFFER_LENGTH,
   INVALID_IMAGE_DIMENSIONS,
   INVALID_CHANNELS,
   INVALID_COLORSPACE,
+  INVALID_FILE_SIGNATURE,
 };
