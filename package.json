@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:dev": "jest --watch"
   },
   "dependencies": {
     "sharp": "^0.30.4"

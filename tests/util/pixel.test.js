@@ -14,6 +14,13 @@ describe('pixelsMatch', () => {
 
     expect(pixelsMatch(p1, p2)).toBeFalsy();
   });
+
+  it('should return false if either pixel is undefined', () => {
+    const p = { r: 0, g: 0, b: 0, a: 0 };
+
+    expect(pixelsMatch(p, undefined)).toBeFalsy();
+    expect(pixelsMatch(undefined, p)).toBeFalsy();
+  });
 });
 
 describe('pixelDiff', () => {
