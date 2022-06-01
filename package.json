@@ -8,8 +8,8 @@
   "author": "Ricky Chon <rickychon99@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest",
-    "test:dev": "jest --watch"
+    "test": "jest --verbose",
+    "test:dev": "jest --watch --verbose"
   },
   "dependencies": {
     "sharp": "^0.30.4"
