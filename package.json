@@ -30,5 +30,6 @@
     "encoder",
     "decoder",
     "javascript"
-  ]
+  ],
+  "packageManager": "yarn@4.0.2"
 }
