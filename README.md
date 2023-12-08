@@ -1,7 +1,49 @@
-<img src="./assets/qoi-logo-gray-framed.svg" />
+<h1 align="center">
+  <img src="./assets/qoi-logo-gray-framed.svg" />
+</h1>
 
-# qoi.js
-[QOI codec](https://github.com/phoboslab/qoi) written in JavaScript.
+<h1 align="center">
+  🖼️ qoi.js
+</h1>
+
+<p align="center">
+  <a href="https://github.com/phoboslab/qoi">
+    <span>QOI codec</span>
+  </a>
+  <span>written in JavaScript.</span>
+</p>
+
+<h4 align="center">
+  <img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/rickyc0626/qoi.js/ci.yml?style=flat-square">
+  <img alt="npm" src="https://img.shields.io/npm/dt/%40rickyc0626%2Fqoi.js?style=flat-square">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/rickyc0626/qoi.js?style=flat-square">
+  <br>
+  <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/rickyc0626/qoi.js?style=flat-square">
+  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/rickyc0626/qoi.js?style=flat-square">
+</h4>
+
+<h4 align="center">
+  <span>Built with</span>
+  <br><br>
+  <a href="https://shields.io/#gh-light-mode-only">
+    <img alt="Node.js" src="https://img.shields.io/badge/-Node.js-f6f8fa?style=for-the-badge&logo=node.js#gh-light-mode-only">
+  </a>
+  <a href="https://shields.io/#gh-dark-mode-only">
+    <img alt="Node.js" src="https://img.shields.io/badge/-Node.js-161b22?style=for-the-badge&logo=node.js#gh-dark-mode-only">
+  </a>
+  <a href="https://shields.io/#gh-light-mode-only">
+    <img alt="Sharp" src="https://img.shields.io/badge/-Sharp-f6f8fa?style=for-the-badge&logo=sharp#gh-light-mode-only">
+  </a>
+  <a href="https://shields.io/#gh-dark-mode-only">
+    <img alt="Sharp" src="https://img.shields.io/badge/-Sharp-161b22?style=for-the-badge&logo=sharp#gh-dark-mode-only">
+  </a>
+  <a href="https://shields.io/#gh-light-mode-only">
+    <img alt="Jest" src="https://img.shields.io/badge/-Jest-f6f8fa?style=for-the-badge&logo=jest&logoColor=C21325#gh-light-mode-only">
+  </a>
+  <a href="https://shields.io/#gh-dark-mode-only">
+    <img alt="Jest" src="https://img.shields.io/badge/-Jest-161b22?style=for-the-badge&logo=jest&logoColor=C21325#gh-dark-mode-only">
+  </a>
+</h4>
 
 ## Installation
 

@@ -1,5 +1,6 @@
 /node_modules
 /out
+/coverage
 
 # Yarn zero-installs
 .pnp.*
@@ -9,4 +10,3 @@
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
